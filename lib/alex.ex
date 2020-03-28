@@ -1,6 +1,7 @@
 defmodule Alex do
   alias Alex.Interface
   alias Alex.ROM
+
   @moduledoc """
   Arcade Learning Environment for Elixir.
 
@@ -24,18 +25,19 @@ defmodule Alex do
   def new(opts \\ []) do
     with {:ok, ale_ref} <- Interface.ale_new() do
       opts
-      |> Enum.reduce(%Interface{ref: ale_ref},
-          fn {key, val}, int ->
-            set_option(int, key, val)
-          end
-        )
+      |> Enum.reduce(
+        %Interface{ref: ale_ref},
+        fn {key, val}, int ->
+          set_option(int, key, val)
+        end
+      )
     else
       err -> raise err
     end
   end
 
   @doc """
-  Loads the specified ROM.
+  Loads the specified ROM and populates fields in `%Interface{}`.
 
   Returns `%Interface{}`.
 
@@ -43,14 +45,67 @@ defmodule Alex do
 
     - `interface`: `%Interface{}`.
   """
-  def load_rom(interface, path_to_rom) do
+  def load(interface, path_to_rom) do
     ale_ref = interface.ref
+
     with :ok <- ROM.check_rom_exists(path_to_rom),
-         :ok <- ROM.check_rom_supported(path_to_rom) do
-          Interface.load_rom(ale_ref, path_to_rom)
-          %Interface{interface | rom: path_to_rom}
+         :ok <- ROM.check_rom_supported(path_to_rom),
+         :ok <- Interface.load_rom(ale_ref, path_to_rom),
+         {:ok, modes} <- Interface.get_available_modes(ale_ref),
+         {:ok, difficulties} <- Interface.get_available_difficulties(ale_ref),
+         {:ok, legal_actions} <- Interface.get_legal_action_set(ale_ref),
+         {:ok, min_actions} <- Interface.get_minimal_action_set(ale_ref),
+         {:ok, lives} <- Interface.lives(ale_ref),
+         {:ok, frame} <- Interface.get_frame_number(ale_ref),
+         {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
+         {:ok, screen_height} <- Interface.get_screen_height(ale_ref),
+         {:ok, screen_width} <- Interface.get_screen_width(ale_ref) do
+      %Interface{
+        interface
+        | rom: path_to_rom,
+          modes: modes,
+          difficulties: MapSet.new(difficulties),
+          legal_actions: MapSet.new(legal_actions),
+          minimal_actions: MapSet.new(min_actions),
+          lives: lives,
+          frame: frame,
+          episode_frame: episode_frame,
+          screen_dim: {screen_height, screen_width}
+      }
     else
       {:error, err} -> raise err
+    end
+  end
+
+  @doc """
+  Checks if game is over.
+
+  Returns `boolean`.
+
+  # Parameters
+
+    - `interface`: `%Interface{}`.
+  """
+  def game_over?(interface), do: Interface.game_over(interface.ref)
+
+  @doc """
+  Resets the given interface.
+
+  Returns `%Interface{}`.
+
+  # Parameters
+
+    - `interface`: `%Interface{}`.
+  """
+  def reset(interface) do
+    ale_ref = interface.ref
+    Interface.reset_game(ale_ref)
+    with {:ok, frame}         <- Interface.get_frame_number(ale_ref),
+         {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
+         {:ok, lives}         <- Interface.lives(ale_ref) do
+           %Interface{interface | frame: frame, episode_frame: episode_frame, lives: lives}
+    else
+      err -> raise err
     end
   end
 
@@ -65,11 +120,68 @@ defmodule Alex do
     - `key`: `Atom` or `String` key.
     - `val`: `String`, `Integer`, `Boolean`, or `Float` value.
   """
-  def set_option(%Interface{} = interface, key, val) when is_atom(key), do:
-    set_option(interface, Atom.to_string(key), val)
+  def set_option(%Interface{} = interface, :difficulty, val) do
+    ale_ref = interface.ref
+    case interface.difficulties do
+      nil -> raise "Could not find difficultues. Did you load a ROM?"
+      _   ->
+        if not MapSet.member?(interface.difficulties, val) do
+          raise "#{val} not a valid difficulty. Must be one of: #{MapSet.to_list(interface.difficulties)}"
+        else
+          :ok = Interface.set_difficulty(ale_ref, val)
+          %Interface{interface | difficulty: val}
+        end
+    end
+  end
+
+  def set_option(%Interface{} = interface, "difficulty", val) do
+    ale_ref = interface.ref
+    case interface.difficulties do
+      nil -> raise "Could not find difficultues. Did you load a ROM?"
+      _   ->
+        if not MapSet.member?(interface.difficulties, val) do
+          raise "#{val} not a valid difficulty. Must be one of: #{MapSet.to_list(interface.difficulties)}"
+        else
+          :ok = Interface.set_difficulty(ale_ref, val)
+          %Interface{interface | difficulty: val}
+        end
+    end
+  end
+
+  def set_option(%Interface{} = interface, :mode, val) do
+    ale_ref = interface.ref
+    case interface.difficulties do
+      nil -> raise "Could not find modes. Did you load a ROM?"
+      _   ->
+        if not MapSet.member?(interface.modes, val) do
+          raise "#{val} not a valid mode. Must be one of: #{MapSet.to_list(interface.modes)}"
+        else
+          :ok = Interface.set_mode(ale_ref, val)
+          %Interface{interface | mode: val}
+        end
+    end
+  end
+
+  def set_option(%Interface{} = interface, "mode", val) do
+    ale_ref = interface.ref
+    case interface.difficulties do
+      nil -> raise "Could not find modes. Did you load a ROM?"
+      _   ->
+        if not MapSet.member?(interface.modes, val) do
+          raise "#{val} not a valid mode. Must be one of: #{MapSet.to_list(interface.modes)}"
+        else
+          :ok = Interface.set_mode(ale_ref, val)
+          %Interface{interface | mode: val}
+        end
+    end
+  end
+
+  def set_option(%Interface{} = interface, key, val) when is_atom(key),
+    do: set_option(interface, Atom.to_string(key), val)
 
   def set_option(%Interface{} = interface, key, val) when is_binary(key) and is_binary(val) do
     ale_ref = interface.ref
+
     case Interface.set_string(ale_ref, key, val) do
       :ok -> Map.update!(interface, String.to_atom(key), fn _ -> val end)
       err -> {:error, err}
@@ -78,6 +190,7 @@ defmodule Alex do
 
   def set_option(%Interface{} = interface, key, val) when is_binary(key) and is_integer(val) do
     ale_ref = interface.ref
+
     case Interface.set_int(ale_ref, key, val) do
       :ok -> Map.update!(interface, String.to_atom(key), fn _ -> val end)
       err -> {:error, err}
@@ -86,6 +199,7 @@ defmodule Alex do
 
   def set_option(%Interface{} = interface, key, val) when is_binary(key) and is_boolean(val) do
     ale_ref = interface.ref
+
     case Interface.set_bool(ale_ref, key, val) do
       :ok -> Map.update!(interface, String.to_atom(key), fn _ -> val end)
       err -> {:error, err}
@@ -94,17 +208,19 @@ defmodule Alex do
 
   def set_option(%Interface{} = interface, key, val) when is_binary(key) and is_float(val) do
     ale_ref = interface.ref
+
     case Interface.set_float(ale_ref, key, val) do
       :ok -> Map.update!(interface, String.to_atom(key), fn _ -> val end)
       err -> {:error, err}
     end
   end
 
-  def set_option(_int, _key, _val), do:
-    raise """
-             Invalid arguments passed to set_option/3.
-             interface must be %Interface{}.
-             key must be binary or atom.
-             value must be binary, integer, boolean, or float.
-          """
+  def set_option(_int, _key, _val),
+    do:
+      raise("""
+         Invalid arguments passed to set_option/3.
+         interface must be %Interface{}.
+         key must be binary or atom.
+         value must be binary, integer, boolean, or float.
+      """)
 end

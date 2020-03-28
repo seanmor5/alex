@@ -11,7 +11,7 @@ defmodule Alex.ROM do
     if File.exists?(path_to_rom) do
       :ok
     else
-      {:error, "Could not find ROM File: #{path_to_rom}."}
+      {:error, "Could not find ROM File: `#{path_to_rom}`."}
     end
   end
 
@@ -19,18 +19,20 @@ defmodule Alex.ROM do
     hash =
       path_to_rom
       |> File.stream!()
-      |> Enum.reduce(:crypto.hash_init(:md5),
-          fn chunk, prev ->
-            :crypto.hash_update(prev, chunk)
-          end
-        )
+      |> Enum.reduce(
+        :crypto.hash_init(:md5),
+        fn chunk, prev ->
+          :crypto.hash_update(prev, chunk)
+        end
+      )
       |> :crypto.hash_final()
       |> Base.encode16()
       |> String.downcase()
+
     if Map.has_key?(@supported_roms, hash) do
       :ok
     else
-      {:error, "Unsupported ROM."}
+      {:error, "Unsupported ROM: `#{path_to_rom}`."}
     end
   end
 end
