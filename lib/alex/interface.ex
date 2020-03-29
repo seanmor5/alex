@@ -75,9 +75,11 @@ defmodule Alex.Interface do
     reward: 0
   ]
 
+  app = Mix.Project.config[:app]
   @doc false
   def load_nifs do
-    :erlang.load_nif('./src/ale/alex/libale_c', 0)
+    path = :filename.join(:code.priv_dir(unquote(app)), 'alex/libale_c')
+    :erlang.load_nif(path, 0)
   end
 
   @doc """
