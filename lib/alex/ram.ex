@@ -10,8 +10,8 @@ defmodule Alex.RAM do
 
   ## Fields
 
-    - `contents`: RAM contents.
-    - `size`: RAM size.
+    - `:contents`: RAM contents.
+    - `:size`: RAM size.
   """
   @type t :: %__MODULE__{
     contents: Enum.t(),

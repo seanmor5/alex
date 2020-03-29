@@ -7,7 +7,7 @@ defmodule Alex.Interface do
   @on_load :load_nifs
 
   @typedoc """
-  Interface struct.
+  Abstraction around ALE Interface.
 
   The Interface struct contains all relevant information about the current ALE Interface. You should interact with this through the `Alex` module if you don't want to worry about interacting with the ALE reference.
 
@@ -18,6 +18,19 @@ defmodule Alex.Interface do
     - `:display_screen`: Display screen option.
     - `:random_seed`: ALE random seed.
     - `:sound`: Play sound option.
+    - `:modes`: Available game modes.
+    - `:mode`: Current game mode.
+    - `:difficultues`: Available difficultues.
+    - `:difficulty`: Current difficulty.
+    - `:legal_actions`: Current legal action set.
+    - `:minimal_actions`: Current minimal action set.
+    - `:lives`: Current number of lives.
+    - `:frame`: Current frame number.
+    - `:episode_frame`: Current episode frame number.
+    - `:screen`: Current screen.
+    - `:state`: Current state.
+    - `:ram`: Current RAM.
+    - `:reward`: Current score.
   """
   @type t :: %__MODULE__{
     ref: reference(),

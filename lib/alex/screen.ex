@@ -11,10 +11,10 @@ defmodule Alex.Screen do
 
   ## Fields
 
-    - `data`: Screen data.
-    - `dim`: Tuple screen dimension.
-    - `rgb`: RGB Screen data.
-    - `grayscale`: Grayscale screen data.
+    - `:data`: Screen data.
+    - `:dim`: Tuple screen dimension.
+    - `:rgb`: RGB Screen data.
+    - `:grayscale`: Grayscale screen data.
   """
   @type t :: %__MODULE__{
     data: Enum.t(),
