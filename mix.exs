@@ -24,12 +24,24 @@ end
 defmodule Alex.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @url "https://www.github.com/seanmor5/alex"
+  @maintainers ["Sean Moriarity"]
+
   def project do
     [
+      name: "ALEx",
       app: :alex,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.10",
+      package: package(),
+      source_url: @url,
       start_permanent: Mix.env() == :prod,
+      build_embedded: Mix.env() == :prod,
+      maintainers: @maintainers,
+      homepage_url: @url,
+      description: description(),
+      docs: docs(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -42,6 +54,29 @@ defmodule Alex.MixProject do
     ]
   end
 
+  def docs do
+    [
+      source_ref: "v#{@version}",
+      extra_section: "guides",
+      formatters: ["html", "epub"],
+      groups_for_modules: groups_for_modules(),
+      extras: extras(),
+      groups_for_extras: groups_for_extras()
+    ]
+  end
+
+  defp extras do
+    []
+  end
+
+  defp groups_for_extras do
+    []
+  end
+
+  defp groups_for_modules do
+    []
+  end
+
   def application do
     [
       extra_applications: [:logger]
@@ -52,6 +87,19 @@ defmodule Alex.MixProject do
     [
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test}
+    ]
+  end
+
+  defp description do
+    "ALEx lets you run the Arcade Learning Environment from Elixir."
+  end
+
+  defp package do
+    [
+      maintainers: @maintainers,
+      name: "alex",
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "http://www.github.com/seanmor5/alex"}
     ]
   end
 end

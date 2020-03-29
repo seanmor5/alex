@@ -1,6 +1,5 @@
 defmodule Alex.State do
   alias Alex.Interface
-  alias Alex.Screen
   alias __MODULE__, as: State
 
   @moduledoc """
