@@ -1,5 +1,6 @@
 defmodule Alex do
   alias Alex.Interface
+  alias Alex.RAM
   alias Alex.ROM
   alias Alex.State
   alias Alex.Screen
@@ -21,7 +22,8 @@ defmodule Alex do
 
   # Options
 
-    - `:display_screen`: `true` or `false` to display screen.
+    - `:display_screen`: `true` or `false` to display screen. Defaults to `false`.
+    - `:sound`: `true` or `false` to play sound. Defaults to `false`.
     - `:random_seed`: `Integer` random seed.
   """
   def new(opts \\ []) do
@@ -62,7 +64,8 @@ defmodule Alex do
          {:ok, frame} <- Interface.get_frame_number(ale_ref),
          {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
          {:ok, state} <- State.new(interface),
-         {:ok, screen} <- Screen.new(interface) do
+         {:ok, screen} <- Screen.new(interface),
+         {:ok, ram} <- RAM.new(interface) do
       %Interface{
         interface
         | rom: path_to_rom,
@@ -73,6 +76,7 @@ defmodule Alex do
           minimal_actions: MapSet.new(min_actions),
           lives: lives,
           frame: frame,
+          ram: ram,
           episode_frame: episode_frame,
           screen: screen,
           state: state
@@ -179,6 +183,16 @@ defmodule Alex do
     - `interface`: `%Interface{}` to set option for.
     - `key`: `Atom` or `String` key.
     - `val`: `String`, `Integer`, `Boolean`, or `Float` value.
+
+  # Options
+
+    - `:repeat_action_probability`: `Float` probability that agent will repeat action in next frame regardless of it's choice. Defaults to 0.
+    - `:color_averaging`: `true` or `false` to enable color averaging. Defaults to `false`.
+    - `:max_num_frames`: `Integer` maximum frames to run. Defaults to `0` or no max.
+    - `:max_num_frames_per_episode`: maximum frames to run per episode. Defaults to `0` or no max.
+    - `:frame_skip`: `Integer` frame skipping rate. Defaults to `1` or no skip.
+    - `:difficulty`: `Integer` game difficulty. Defaults to `0`.
+    - `:mode`: `Integer` game mode. Defaults to `0`.
   """
   def set_option(%Interface{} = interface, :difficulty, val) do
     ale_ref = interface.ref

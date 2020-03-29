@@ -2,11 +2,20 @@
 
 > (A)rcade (L)earning (E)nvironment for Eli(x)ir.
 
+## Documentation
+
+[ALEx Documentation](#)
+[Arcade Learning Environment Manual](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/manual/manual.pdf)
+[Arcade Learning Environment: An Evaluation Platform for General Agents](https://arxiv.org/abs/1207.4708)
+
 ## Overview
 
 ALEx is an implementation of the [Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment) for Elixir.
 
-ALEx exposes the ALE C Wrapper as NIFs
+> The Arcade Learning Environment (ALE) is a simple object-oriented framework that allows researchers and hobbyists to develop AI agents for Atari 2600 games. It is built on top of the Atari 2600 emulator [Stella](https://stella-emu.github.io/) and separates the details of emulation from agent design.
+
+ALEx exposes the ALE Interface in Elixir with NIFs. It adds an additional abstraction around the interface that makes it easy to develop on top of the ALE in Elixir.
+
 ## Installation
 
 First, install ALE dependencies:
@@ -35,3 +44,16 @@ end
 ```
 
 Finally, run `mix deps.get, deps.compile`. The first compilation will take quite a bit of time.
+
+## Examples
+
+ALEx comes with a Tetris agent example. To run, ensure you have the required dependencies installed and clone the repo. Then run: `mix run examples/random_agent.exs`.
+
+The agent will make random actions over the course of a Tetris game.
+
+## ROMs
+
+ALEx supports 
+## Contributing
+
+To contribute, please either create a pull request or open an issue.

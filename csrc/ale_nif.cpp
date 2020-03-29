@@ -389,8 +389,6 @@ static ERL_NIF_TERM get_episode_frame_number(ErlNifEnv* env, int argc, const ERL
 
   frame = interface->getEpisodeFrameNumber();
 
-  nifpp::TERM ret = nifpp::make(env, frame);
-
   return nifpp::make(env, std::make_tuple(ok, frame));
 }
 
@@ -398,26 +396,35 @@ static ERL_NIF_TERM get_screen(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 {
   ale::ALEInterface* interface;
   size_t w, h;
-  ale::pixel_t *screen_data;
 
   nifpp::get(env, argv[0], interface);
 
-  screen_data = interface->getScreen().getArray();
+  w = interface->getScreen().width();
+  h = interface->getScreen().height();
+  int size = w*h*sizeof(ale::pixel_t);
+  ale::pixel_t* screen_data = interface->getScreen().getArray();
 
-  return nifpp::make(env, std::make_tuple(ok, screen_data));
+  std::vector<ale::pixel_t> pixels(size);
+
+  std::memcpy(&pixels[0], screen_data, size*sizeof(ale::pixel_t));
+
+  return nifpp::make(env, std::make_tuple(ok, pixels));
 }
 
 static ERL_NIF_TERM get_ram(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
   ale::ALEInterface* interface;
-  const unsigned char* ale_ram;
-  unsigned char* ram;
 
   nifpp::get(env, argv[0], interface);
 
-  ale_ram = interface->getRAM().array();
+  const unsigned char* ale_ram = interface->getRAM().array();
+  int size = interface->getRAM().size();
 
-  return nifpp::make(env, std::make_tuple(ok, ale_ram));
+  std::vector<unsigned char> ram(size);
+
+  std::memcpy(&ram[0], ale_ram, size*sizeof(unsigned char));
+
+  return nifpp::make(env, std::make_tuple(ok, ram));
 }
 
 static ERL_NIF_TERM get_ram_size(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])

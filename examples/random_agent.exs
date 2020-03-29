@@ -1,15 +1,17 @@
 # Create new Alex interface
 interface = Alex.new()
 
-# Set Options
+# Set Initialization Options
 interface =
   interface
   |> Alex.set_option(:display_screen, true)
+  |> Alex.set_option(:sound, true)
   |> Alex.set_option(:random_seed, 123)
 
 # Load the ROM
-tetris = Alex.load(interface, "priv/jamesbond.bin")
+tetris = Alex.load(interface, "priv/tetris.bin")
 
+# Define an Episode
 episode =
   fn game, episode ->
     if Alex.game_over?(game) do

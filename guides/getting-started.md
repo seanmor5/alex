@@ -1,6 +1,6 @@
 # Getting Started
 
-ALEx is implemented the Arcade Learning Environment for Elixir.
+ALEx is an implementation of the Arcade Learning Environment for Elixir.
 
 ## Install ALEx
 
@@ -85,6 +85,12 @@ ALEx supports all ROMS supported by the ALE. ROMs can be easily found on reposit
 
 [Supported ROMs](supported-roms.html) has a list of all supported ROMs and their MD5 checksums.
 
+## Configuring ALEx
+
+See the [Configuration Guide](configuration.html).
+
 ## More Information
 
-You'll want to checkout the [Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment) to learn more.
+You'll want to check out the [Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment) to learn more.
+
+Additionally, you can check out the [manual](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/manual/manual.pdf).

@@ -67,8 +67,9 @@ defmodule Alex.MixProject do
 
   defp extras do
     [
-      "guides/installation.md",
       "guides/getting-started.md",
+      "guides/installation.md",
+      "guides/configuration.md",
       "guides/supported-roms.md"
     ]
   end
