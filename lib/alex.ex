@@ -61,7 +61,7 @@ defmodule Alex do
          {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
          {:ok, screen_height} <- Interface.get_screen_height(ale_ref),
          {:ok, screen_width} <- Interface.get_screen_width(ale_ref),
-         {:ok, state} <- State.get_state(interface) do
+         {:ok, state} <- State.new(interface) do
       %Interface{
         interface
         | rom: path_to_rom,
