@@ -1,5 +1,6 @@
 defmodule Alex.State do
   alias Alex.Interface
+  alias Alex.Screen
   alias __MODULE__, as: State
 
   @moduledoc """
@@ -24,48 +25,6 @@ defmodule Alex.State do
          {:ok, encoded} <- Interface.encode_state(state),
          {:ok, length} <- Interface.encode_state_len(state) do
       {:ok, %State{ref: state, encoded: encoded, length: length}}
-    else
-      err -> raise err
-    end
-  end
-
-  @doc """
-  Set interface to given state.
-
-  Returns `{:ok, interface}`.
-
-  # Parameters
-
-    - `interface`: `%Interface{}`.
-  """
-  def set_state(%Interface{} = interface, %State{} = state) do
-    ale_ref = interface.ref
-
-    with :ok <- Interface.restore_state(state.ref),
-         {:ok, modes} <- Interface.get_available_modes(ale_ref),
-         {:ok, difficulties} <- Interface.get_available_difficulties(ale_ref),
-         {:ok, difficulty} <- Interface.get_difficulty(ale_ref),
-         {:ok, legal_actions} <- Interface.get_legal_action_set(ale_ref),
-         {:ok, min_actions} <- Interface.get_minimal_action_set(ale_ref),
-         {:ok, lives} <- Interface.lives(ale_ref),
-         {:ok, frame} <- Interface.get_frame_number(ale_ref),
-         {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
-         {:ok, state} <- State.new(interface),
-         {:ok, screen} <- Screen.new(interface) do
-      {:ok,
-       %Interface{
-         interface
-         | modes: modes,
-           difficulties: difficulties,
-           difficulty: difficulty,
-           legal_actions: MapSet.new(legal_actions),
-           minimal_actions: min_actions,
-           lives: lives,
-           frame: frame,
-           episode_frame: episode_frame,
-           state: state,
-           screen: screen
-       }}
     else
       err -> raise err
     end

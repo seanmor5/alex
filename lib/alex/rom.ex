@@ -6,7 +6,7 @@ defmodule Alex.ROM do
   @doc """
   Returns all supported ROMs.
 
-  Returns `%{}`.
+  Returns `Map`.
   """
   def supported_roms do
     %{

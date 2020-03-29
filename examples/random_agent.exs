@@ -24,7 +24,7 @@ episode =
 tetris = episode.(tetris, episode)
 
 # Take a Screenshot of Final Screen
-Alex.Screen.screenshot(tetris)
+Alex.screenshot(tetris)
 
 # Output Result
 IO.write("\nEpisode ended with score: #{tetris.reward}\n")

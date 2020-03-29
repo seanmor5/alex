@@ -5,9 +5,9 @@ defmodule Alex do
   alias Alex.Screen
 
   @moduledoc """
-  Arcade Learning Environment for Elixir.
+  (A)rcade (L)earning (E)nvironment for Eli(x)ir.
 
-  Alex is a port of the ALE for Elixir. There are two ways to interact with the ALE from Alex: through the `Alex.Interface` module which mimics the ALE C Lib and provides NIFs for interacting directly with the ALE C++ Interface, or through the `Alex` module which is just a more "Elixir-y" wrapper of `Alex.Interface`.
+  ALEx is a port of the ALE for Elixir. There are two ways to interact with the ALE from ALEx: through the `Alex.Interface` module which mimics the ALE C Lib and provides NIFs for interacting directly with the ALE C++ Interface, or through the `Alex` module which is a safer wrapper of `Alex.Interface`.
   """
 
   @doc """
@@ -299,4 +299,73 @@ defmodule Alex do
          key must be binary or atom.
          value must be binary, integer, boolean, or float.
       """)
+
+  @doc """
+  Set interface to given state.
+
+  Returns `%Interface{}`.
+
+  # Parameters
+
+    - `interface`: `%Interface{}`.
+  """
+  def set_state(%Interface{} = interface, %State{} = state) do
+    ale_ref = interface.ref
+
+    with :ok <- Interface.restore_state(ale_ref, state.ref),
+         {:ok, modes} <- Interface.get_available_modes(ale_ref),
+         {:ok, difficulties} <- Interface.get_available_difficulties(ale_ref),
+         {:ok, difficulty} <- Interface.get_difficulty(ale_ref),
+         {:ok, legal_actions} <- Interface.get_legal_action_set(ale_ref),
+         {:ok, min_actions} <- Interface.get_minimal_action_set(ale_ref),
+         {:ok, lives} <- Interface.lives(ale_ref),
+         {:ok, frame} <- Interface.get_frame_number(ale_ref),
+         {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
+         {:ok, state} <- State.new(interface),
+         {:ok, screen} <- Screen.new(interface) do
+       %Interface{
+         interface
+         | modes: modes,
+           difficulties: difficulties,
+           difficulty: difficulty,
+           legal_actions: MapSet.new(legal_actions),
+           minimal_actions: min_actions,
+           lives: lives,
+           frame: frame,
+           episode_frame: episode_frame,
+           state: state,
+           screen: screen
+       }
+    else
+      err -> raise err
+    end
+  end
+
+  @doc """
+  Takes a screenshot.
+
+  Returns `:ok`.
+
+  # Parameters
+
+    - `interface`: `%Interface{}`.
+  """
+  def screenshot(%Interface{} = interface, path \\ "") do
+    ale_ref = interface.ref
+
+    path =
+      if path == "" do
+        dtg = DateTime.utc_now()
+
+        dtg
+        |> DateTime.to_string()
+        |> String.replace(" ", "_")
+        |> String.replace(":", "_")
+        |> Kernel.<>(".png")
+      else
+        path
+      end
+
+    Interface.save_screen_png(ale_ref, path)
+  end
 end

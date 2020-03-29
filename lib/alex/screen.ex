@@ -30,32 +30,4 @@ defmodule Alex.Screen do
       err -> raise err
     end
   end
-
-  @doc """
-  Takes a screenshot.
-
-  Returns `:ok`.
-
-  # Parameters
-
-    - `interface`: `%Interface{}`.
-  """
-  def screenshot(%Interface{} = interface, path \\ "") do
-    ale_ref = interface.ref
-
-    path =
-      if path == "" do
-        dtg = DateTime.utc_now()
-
-        dtg
-        |> DateTime.to_string()
-        |> String.replace(" ", "_")
-        |> String.replace(":", "_")
-        |> Kernel.<>(".png")
-      else
-        path
-      end
-
-    Interface.save_screen_png(ale_ref, path)
-  end
 end
