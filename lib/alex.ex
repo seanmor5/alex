@@ -50,8 +50,8 @@ defmodule Alex do
   def load(%Interface{} = interface, path_to_rom) do
     ale_ref = interface.ref
 
-    with :ok <- ROM.check_rom_exists(path_to_rom),
-         :ok <- ROM.check_rom_supported(path_to_rom),
+    with :ok <- ROM.rom_exists?(path_to_rom),
+         :ok <- ROM.rom_supported?(path_to_rom),
          :ok <- Interface.load_rom(ale_ref, path_to_rom),
          {:ok, modes} <- Interface.get_available_modes(ale_ref),
          {:ok, difficulties} <- Interface.get_available_difficulties(ale_ref),

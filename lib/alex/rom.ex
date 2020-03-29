@@ -27,7 +27,7 @@ defmodule Alex.ROM do
       "028024fb8e5e5f18ea586652f9799c96" => "carnival.bin",
       "91c2098e88a6b13f977af8c003e0bca5" => "centipede.bin",
       "c1cb228470a87beb5f36e90ac745da26" => "chopper_command.bin",
-      "55ef7b65066428367844342ed59f956c" => "crazy_climber.bin"
+      "55ef7b65066428367844342ed59f956c" => "crazy_climber.bin",
       "0f643c34e40e3f1daafd9c524d3ffe64" => "defender.bin",
       "f0e0addc07971561ab80d9abe1b8d333" => "demon_attack.bin",
       "368d88a6c071caba60b4f778615aae94" => "double_dunk.bin",
