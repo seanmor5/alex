@@ -57,6 +57,7 @@ defmodule Alex.MixProject do
   def docs do
     [
       source_ref: "v#{@version}",
+      main: "getting-started",
       extra_section: "guides",
       formatters: ["html", "epub"],
       groups_for_modules: groups_for_modules(),
