@@ -8,7 +8,9 @@ defmodule Alex do
   @moduledoc """
   (A)rcade (L)earning (E)nvironment for Eli(x)ir.
 
-  ALEx is a port of the ALE for Elixir. There are two ways to interact with the ALE from ALEx: through the `Alex.Interface` module which mimics the ALE C Lib and provides NIFs for interacting directly with the ALE C++ Interface, or through the `Alex` module which is a safer wrapper of `Alex.Interface`.
+  ALEx is an interface for the ALE in Elixir. There are two ways to interact with the ALE from ALEx: through the `Alex.Interface` module which mimics the ALE C Lib and provides NIFs for interacting directly with the ALE C++ Interface, or through the `Alex` module which is a safer wrapper of `Alex.Interface`.
+
+  `Alex` allows you to interact with the ALE without worrying about some of the lower level details of the ALE Interface. Every function in `Alex` returns an `Alex.Interface` struct which contains details about the current ALE Interface. See `Alex.Interface` for information about the Interface struct.
   """
 
   @doc """
@@ -69,7 +71,7 @@ defmodule Alex do
       %Interface{
         interface
         | rom: path_to_rom,
-          modes: modes,
+          modes: MapSet.new(modes),
           difficulties: MapSet.new(difficulties),
           difficulty: difficulty,
           legal_actions: MapSet.new(legal_actions),
@@ -235,7 +237,7 @@ defmodule Alex do
   def set_option(%Interface{} = interface, :mode, val) do
     ale_ref = interface.ref
 
-    case interface.difficulties do
+    case interface.modes do
       nil ->
         raise "Could not find modes. Did you load a ROM?"
 
@@ -252,7 +254,7 @@ defmodule Alex do
   def set_option(%Interface{} = interface, "mode", val) do
     ale_ref = interface.ref
 
-    case interface.difficulties do
+    case interface.modes do
       nil ->
         raise "Could not find modes. Did you load a ROM?"
 
@@ -339,11 +341,11 @@ defmodule Alex do
          {:ok, screen} <- Screen.new(interface) do
        %Interface{
          interface
-         | modes: modes,
-           difficulties: difficulties,
+         | modes: MapSet.new(modes),
+           difficulties: MapSet.new(difficulties),
            difficulty: difficulty,
            legal_actions: MapSet.new(legal_actions),
-           minimal_actions: min_actions,
+           minimal_actions: MapSet.new(min_actions),
            lives: lives,
            frame: frame,
            episode_frame: episode_frame,

@@ -6,12 +6,47 @@ defmodule Alex.Interface do
   """
   @on_load :load_nifs
 
+  @typedoc """
+  Interface struct.
+
+  The Interface struct contains all relevant information about the current ALE Interface. You should interact with this through the `Alex` module if you don't want to worry about interacting with the ALE reference.
+
+  ## Fields
+
+    - `:ref`: Reference to ALE.
+    - `:rom`: Path to loaded ROM.
+    - `:display_screen`: Display screen option.
+    - `:random_seed`: ALE random seed.
+    - `:sound`: Play sound option.
+  """
+  @type t :: %__MODULE__{
+    ref: reference(),
+    rom: String.t(),
+    display_screen: boolean(),
+    random_seed: integer(),
+    sound: boolean(),
+    modes: MapSet.t(integer()),
+    mode: integer(),
+    difficulties: MapSet.t(integer()),
+    difficulty: integer(),
+    legal_actions: MapSet.t(integer()),
+    minimal_actions: MapSet.t(integer()),
+    lives: integer(),
+    frame: integer(),
+    episode_frame: integer(),
+    screen: Alex.Screen.t(),
+    state: Alex.State.t(),
+    ram: Alex.RAM.t(),
+    reward: number()
+  }
+
   @enforce_keys [:ref]
   defstruct [
     :ref,
     rom: nil,
     display_screen: false,
     random_seed: :rand.uniform(999_999),
+    sound: false,
     modes: nil,
     mode: 0,
     difficulties: nil,

@@ -5,6 +5,18 @@ defmodule Alex.RAM do
   Convenience functions for working with ALE RAM.
   """
 
+  @typedoc """
+  Abstraction around ALE RAM.
+
+  ## Fields
+
+    - `contents`: RAM contents.
+    - `size`: RAM size.
+  """
+  @type t :: %__MODULE__{
+    contents: Enum.t(),
+    size: integer()
+  }
   defstruct [:contents, :size]
 
   @doc """

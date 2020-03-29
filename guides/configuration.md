@@ -20,5 +20,5 @@ Once you've loaded a ROM, you can set a number of environment options:
 - `:max_num_frames_per_episode`: maximum frames to run per episode. Defaults to `0` or no max.
 - `:frame_skip`: `Integer` frame skipping rate. Defaults to `1` or no skip.
 - `:difficulty`: `Integer` game difficulty. Defaults to `0`.
-- `:mode`: `Integer` game mode. Defaults to `0`.`
+- `:mode`: `Integer` game mode. Defaults to `0`.
 

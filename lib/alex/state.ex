@@ -6,6 +6,20 @@ defmodule Alex.State do
   Convenience functions for working with state.
   """
 
+  @typedoc """
+  Abstraction around ALE state.
+
+  ## Fields
+
+    - `ref`: Reference to ALE state.
+    - `encoded`: Encoded version of ALE state.
+    - `length`: Length of encoded state.
+  """
+  @type t :: %__MODULE__{
+    ref: reference(),
+    encoded: Enum.t(),
+    length: integer()
+  }
   defstruct ref: nil, encoded: nil, length: 0
 
   @doc """
