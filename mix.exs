@@ -34,6 +34,7 @@ defmodule Alex.MixProject do
       app: :alex,
       version: @version,
       elixir: "~> 1.9",
+      compilers: [:ale] ++ Mix.compilers(),
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       source_url: @url,
@@ -50,8 +51,7 @@ defmodule Alex.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ],
-      compilers: [:ale] ++ Mix.compilers()
+      ]
     ]
   end
 
