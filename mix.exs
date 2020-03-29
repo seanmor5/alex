@@ -33,12 +33,12 @@ defmodule Alex.MixProject do
       name: "ALEx",
       app: :alex,
       version: @version,
-      elixir: "~> 1.10",
+      elixir: "~> 1.9",
+      elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       source_url: @url,
-      start_permanent: Mix.env() == :prod,
       build_embedded: Mix.env() == :prod,
-      elixirc_paths: elixirc_paths(Mix.env()),
+      start_permanent: Mix.env() == :prod,
       maintainers: @maintainers,
       homepage_url: @url,
       description: description(),
@@ -88,9 +88,7 @@ defmodule Alex.MixProject do
   end
 
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    []
   end
 
   defp deps do
