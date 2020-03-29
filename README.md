@@ -2,7 +2,7 @@
 
 > (A)rcade (L)earning (E)nvironment for Eli(x)ir.
 
-[![Hex.pm](https://img.shields.io/hexpm/v/alex)](https://hex.pm/alex)
+[![Hex.pm](https://img.shields.io/hexpm/v/alex)](https://hex.pm/packages/alex)
 
 ![Tetris GIF](assets/alex.gif)
 
