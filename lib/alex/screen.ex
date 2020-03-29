@@ -19,6 +19,7 @@ defmodule Alex.Screen do
   """
   def new(%Interface{} = interface) do
     ale_ref = interface.ref
+
     with {:ok, screen} <- Interface.get_screen(ale_ref),
          {:ok, rgb} <- Interface.get_screen_rgb(ale_ref),
          {:ok, grayscale} <- Interface.get_screen_grayscale(ale_ref),
@@ -41,9 +42,11 @@ defmodule Alex.Screen do
   """
   def screenshot(%Interface{} = interface, path \\ "") do
     ale_ref = interface.ref
+
     path =
       if path == "" do
         dtg = DateTime.utc_now()
+
         dtg
         |> DateTime.to_string()
         |> String.replace(" ", "_")
@@ -52,6 +55,7 @@ defmodule Alex.Screen do
       else
         path
       end
+
     Interface.save_screen_png(ale_ref, path)
   end
 end

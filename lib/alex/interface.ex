@@ -48,7 +48,7 @@ defmodule Alex.Interface do
     do: raise("get_available_difficulties_size/1 not implemented.")
 
   def set_difficulty(_ref, _diff), do: raise("set_difficulty/2 not implemented.")
-  def get_difficulty(_ref), do: raise "get_difficulty/1 not implemented."
+  def get_difficulty(_ref), do: raise("get_difficulty/1 not implemented.")
   def get_legal_action_set(_ref), do: raise("get_legal_action_set/1 not implemented.")
   def get_legal_action_set_size(_ref), do: raise("get_legal_action_set_size/1 not implemented.")
   def get_minimal_action_set(_ref), do: raise("get_minimal_action_set/1 not implemented.")
@@ -59,22 +59,22 @@ defmodule Alex.Interface do
   def get_frame_number(_ref), do: raise("get_frame_number/1 not implemented.")
   def lives(_ref), do: raise("lives/1 not implemented.")
   def get_episode_frame_number(_ref), do: "get_episode_frame_number/1 not implemented."
-  def get_screen(_ref), do: raise "get_screen/1 not implemented."
-  def get_ram(_ref), do: raise "get_ram/1 not implemented."
+  def get_screen(_ref), do: raise("get_screen/1 not implemented.")
+  def get_ram(_ref), do: raise("get_ram/1 not implemented.")
   def get_ram_size(_ref), do: raise("get_ram_size/1 not implemented.")
   def get_screen_width(_ref), do: raise("get_screen_width/1 not implemented.")
   def get_screen_height(_ref), do: raise("get_screen_height/1 not implemented.")
-  def get_screen_rgb(_ref), do: raise "get_screen_rgb/1 not implemented."
-  def get_screen_grayscale(_ref), do: raise "get_screen_grayscale/1 not implemented."
-  def save_screen_png(_ref, _path), do: raise "save_screen_png/2 not implemented."
-  def save_state(_ref), do: raise "save_state/1 not implemented."
-  def load_state(_ref), do: raise "load_state/1 not implemented."
-  def clone_state(_ref), do: raise "clone_state/1 not implemented."
-  def restore_state(_ref, _state), do: raise "restore_state/1 not implemented."
-  def clone_system_state(_ref), do: raise "clone_system_state/1 not implemented."
-  def restore_system_state(_ref, _state), do: raise "restore_system_state/1 not implemented."
-  def encode_state(_state), do: raise "encode_state/1 not implemented."
-  def encode_state_len(_state), do: raise "encode_state_len/1 not implemented."
-  def decode_state(_serial, _len), do: raise "decode_state/2 not implemented."
-  def set_logger_mode(_mode), do: raise "set_logger_mode/1 not implemented."
+  def get_screen_rgb(_ref), do: raise("get_screen_rgb/1 not implemented.")
+  def get_screen_grayscale(_ref), do: raise("get_screen_grayscale/1 not implemented.")
+  def save_screen_png(_ref, _path), do: raise("save_screen_png/2 not implemented.")
+  def save_state(_ref), do: raise("save_state/1 not implemented.")
+  def load_state(_ref), do: raise("load_state/1 not implemented.")
+  def clone_state(_ref), do: raise("clone_state/1 not implemented.")
+  def restore_state(_ref, _state), do: raise("restore_state/1 not implemented.")
+  def clone_system_state(_ref), do: raise("clone_system_state/1 not implemented.")
+  def restore_system_state(_ref, _state), do: raise("restore_system_state/1 not implemented.")
+  def encode_state(_state), do: raise("encode_state/1 not implemented.")
+  def encode_state_len(_state), do: raise("encode_state_len/1 not implemented.")
+  def decode_state(_serial, _len), do: raise("decode_state/2 not implemented.")
+  def set_logger_mode(_mode), do: raise("set_logger_mode/1 not implemented.")
 end

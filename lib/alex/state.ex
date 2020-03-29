@@ -1,6 +1,7 @@
 defmodule Alex.State do
   alias Alex.Interface
   alias __MODULE__, as: State
+
   @moduledoc """
   Convenience functions for working with state.
   """
@@ -18,10 +19,11 @@ defmodule Alex.State do
   """
   def new(%Interface{} = interface) do
     ale_ref = interface.ref
-    with {:ok, state}   <- Interface.clone_state(ale_ref),
+
+    with {:ok, state} <- Interface.clone_state(ale_ref),
          {:ok, encoded} <- Interface.encode_state(state),
-         {:ok, length}  <- Interface.encode_state_len(state) do
-          {:ok, %State{ref: state, encoded: encoded, length: length}}
+         {:ok, length} <- Interface.encode_state_len(state) do
+      {:ok, %State{ref: state, encoded: encoded, length: length}}
     else
       err -> raise err
     end

@@ -92,6 +92,7 @@ defmodule Alex do
   """
   def step(%Interface{} = interface, action) do
     ale_ref = interface.ref
+
     if not MapSet.member?(interface.legal_actions, action) do
     else
       with {:ok, reward} <- Interface.act(ale_ref, action),
@@ -101,16 +102,16 @@ defmodule Alex do
            {:ok, frame} <- Interface.get_frame_number(ale_ref),
            {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
            {:ok, state} <- State.new(interface) do
-            %Interface{
-              interface |
-              reward: interface.reward+reward,
-              lives: lives,
-              legal_actions: MapSet.new(legal_actions),
-              minimal_actions: MapSet.new(min_actions),
-              frame: frame,
-              episode_frame: episode_frame,
-              state: state
-            }
+        %Interface{
+          interface
+          | reward: interface.reward + reward,
+            lives: lives,
+            legal_actions: MapSet.new(legal_actions),
+            minimal_actions: MapSet.new(min_actions),
+            frame: frame,
+            episode_frame: episode_frame,
+            state: state
+        }
       else
         err -> raise err
       end
@@ -143,14 +144,24 @@ defmodule Alex do
   def reset(%Interface{} = interface) do
     ale_ref = interface.ref
     Interface.reset_game(ale_ref)
-    with {:ok, frame}         <- Interface.get_frame_number(ale_ref),
+
+    with {:ok, frame} <- Interface.get_frame_number(ale_ref),
          {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
-         {:ok, lives}         <- Interface.lives(ale_ref),
+         {:ok, lives} <- Interface.lives(ale_ref),
          {:ok, legal_actions} <- Interface.get_legal_action_set(ale_ref),
          {:ok, min_actions} <- Interface.get_minimal_action_set(ale_ref),
          {:ok, state} <- State.new(interface),
          {:ok, screen} <- Screen.new(interface) do
-           %Interface{interface | frame: frame, episode_frame: episode_frame, lives: lives, legal_actions: MapSet.new(legal_actions), minimal_actions: MapSet.new(min_actions), state: state, screen: screen}
+      %Interface{
+        interface
+        | frame: frame,
+          episode_frame: episode_frame,
+          lives: lives,
+          legal_actions: MapSet.new(legal_actions),
+          minimal_actions: MapSet.new(min_actions),
+          state: state,
+          screen: screen
+      }
     else
       err -> raise err
     end
@@ -169,11 +180,16 @@ defmodule Alex do
   """
   def set_option(%Interface{} = interface, :difficulty, val) do
     ale_ref = interface.ref
+
     case interface.difficulties do
-      nil -> raise "Could not find difficultues. Did you load a ROM?"
-      _   ->
+      nil ->
+        raise "Could not find difficultues. Did you load a ROM?"
+
+      _ ->
         if not MapSet.member?(interface.difficulties, val) do
-          raise "#{val} not a valid difficulty. Must be one of: #{MapSet.to_list(interface.difficulties)}"
+          raise "#{val} not a valid difficulty. Must be one of: #{
+                  MapSet.to_list(interface.difficulties)
+                }"
         else
           :ok = Interface.set_difficulty(ale_ref, val)
           %Interface{interface | difficulty: val}
@@ -183,11 +199,16 @@ defmodule Alex do
 
   def set_option(%Interface{} = interface, "difficulty", val) do
     ale_ref = interface.ref
+
     case interface.difficulties do
-      nil -> raise "Could not find difficultues. Did you load a ROM?"
-      _   ->
+      nil ->
+        raise "Could not find difficultues. Did you load a ROM?"
+
+      _ ->
         if not MapSet.member?(interface.difficulties, val) do
-          raise "#{val} not a valid difficulty. Must be one of: #{MapSet.to_list(interface.difficulties)}"
+          raise "#{val} not a valid difficulty. Must be one of: #{
+                  MapSet.to_list(interface.difficulties)
+                }"
         else
           :ok = Interface.set_difficulty(ale_ref, val)
           %Interface{interface | difficulty: val}
@@ -197,9 +218,12 @@ defmodule Alex do
 
   def set_option(%Interface{} = interface, :mode, val) do
     ale_ref = interface.ref
+
     case interface.difficulties do
-      nil -> raise "Could not find modes. Did you load a ROM?"
-      _   ->
+      nil ->
+        raise "Could not find modes. Did you load a ROM?"
+
+      _ ->
         if not MapSet.member?(interface.modes, val) do
           raise "#{val} not a valid mode. Must be one of: #{MapSet.to_list(interface.modes)}"
         else
@@ -211,9 +235,12 @@ defmodule Alex do
 
   def set_option(%Interface{} = interface, "mode", val) do
     ale_ref = interface.ref
+
     case interface.difficulties do
-      nil -> raise "Could not find modes. Did you load a ROM?"
-      _   ->
+      nil ->
+        raise "Could not find modes. Did you load a ROM?"
+
+      _ ->
         if not MapSet.member?(interface.modes, val) do
           raise "#{val} not a valid mode. Must be one of: #{MapSet.to_list(interface.modes)}"
         else
