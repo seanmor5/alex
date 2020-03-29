@@ -53,7 +53,10 @@ The agent will make random actions over the course of a Tetris game.
 
 ## ROMs
 
-ALEx supports 
+ALEx supports all ROMs supported by ALE. ROMs are easy to find online. This Repo comes with a Tetris ROM.
+
+See [Supported ROMs](#).
+
 ## Contributing
 
 To contribute, please either create a pull request or open an issue.
