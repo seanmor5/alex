@@ -24,7 +24,7 @@ end
 defmodule Alex.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
   @url "https://www.github.com/seanmor5/alex"
   @maintainers ["Sean Moriarity"]
 
@@ -38,6 +38,7 @@ defmodule Alex.MixProject do
       source_url: @url,
       start_permanent: Mix.env() == :prod,
       build_embedded: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       maintainers: @maintainers,
       homepage_url: @url,
       description: description(),
@@ -53,6 +54,9 @@ defmodule Alex.MixProject do
       compilers: [:ale] ++ Mix.compilers()
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def docs do
     [
