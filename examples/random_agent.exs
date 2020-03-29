@@ -8,7 +8,7 @@ interface =
   |> Alex.set_option(:random_seed, 123)
 
 # Load the ROM
-tetris = Alex.load(interface, "priv/tetris.bin")
+tetris = Alex.load(interface, "priv/jamesbond.bin")
 
 episode =
   fn game, episode ->

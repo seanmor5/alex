@@ -1,9 +1,12 @@
-# Alex
+# ALEx
 
-**[https://github.com/mgbellemare/Arcade-Learning-Environment](Arcade Learning Environment) for Elixir**
+> (A)rcade (L)earning (E)nvironment for Eli(x)ir.
 
 ## Overview
 
+ALEx is an implementation of the [Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment) for Elixir.
+
+ALEx exposes the ALE C Wrapper as NIFs
 ## Installation
 
 First, install ALE dependencies:
