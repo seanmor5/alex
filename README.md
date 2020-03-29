@@ -14,7 +14,9 @@ ALEx is an implementation of the [Arcade Learning Environment](https://github.co
 
 > The Arcade Learning Environment (ALE) is a simple object-oriented framework that allows researchers and hobbyists to develop AI agents for Atari 2600 games. It is built on top of the Atari 2600 emulator [Stella](https://stella-emu.github.io/) and separates the details of emulation from agent design.
 
-ALEx exposes the ALE Interface in Elixir with NIFs. It adds an additional abstraction around the interface that makes it easy to develop on top of the ALE in Elixir.
+ALEx exposes the ALE Interface through NIFs. It adds an additional abstraction around the interface that makes it easy to develop on top of the ALE in Elixir.
+
+You can interact with the ALE from the lower-level NIF interface, or you can use the higher level abstraction.
 
 ## Installation
 
@@ -32,6 +34,12 @@ $ sudo apt-get install libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev cmake
 $ brew install sdl
 $ brew install cmake
 ```
+
+### Windows
+
+I haven't tested this with Windows yet, but I assume it should be straightforward to run. If anybody gets it working please open a pull request with your instructions.
+
+### Mix
 
 Then, add `alex` to your dependencies in `mix.exs`:
 
