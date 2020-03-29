@@ -11,8 +11,17 @@ ALEx exposes the ALE C Wrapper as NIFs
 
 First, install ALE dependencies:
 
+### Linux
+
 ```shell
 $ sudo apt-get install libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev cmake
+```
+
+### Mac
+
+```shell
+$ brew install sdl
+$ brew install cmake
 ```
 
 Then, add `alex` to your dependencies in `mix.exs`:

@@ -88,6 +88,7 @@ defmodule Alex.ROM do
       "eea0da9b987d661264cce69a7c13c3bd" => "zaxxon.bin"
     }
   end
+
   @doc """
   Check if the specified ROM exists.
 
