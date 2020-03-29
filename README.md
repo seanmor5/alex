@@ -4,9 +4,9 @@
 
 ## Documentation
 
-[ALEx Documentation](#)
-[Arcade Learning Environment Manual](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/manual/manual.pdf)
-[Arcade Learning Environment: An Evaluation Platform for General Agents](https://arxiv.org/abs/1207.4708)
+* [ALEx Documentation](#)
+* [Arcade Learning Environment Manual](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/manual/manual.pdf)
+* [Arcade Learning Environment: An Evaluation Platform for General Agents](https://arxiv.org/abs/1207.4708)
 
 ## Overview
 
