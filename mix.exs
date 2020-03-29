@@ -2,8 +2,7 @@ defmodule Mix.Tasks.Compile.Ale do
   use Mix.Task
 
   def run(_args) do
-    {:ok, cwd} = File.cwd()
-    path_to_ale = Path.join([cwd, "src", "ale", "build"])
+    path_to_ale = Path.join(["src", "ale", "build"])
 
     if File.exists?(path_to_ale) do
       IO.write("ALE Already Compiled.\n")
@@ -12,10 +11,10 @@ defmodule Mix.Tasks.Compile.Ale do
            :ok <- File.cd(path_to_ale),
            {_result, 0} <- System.cmd("cmake", ["-DUSE_SDL=ON", ".."]),
            {result, 0} <- System.cmd("make", ["-j", "4"]) do
-        IO.write("#{result}")
+        IO.binwrite result
       else
         {result, err_code} ->
-          IO.write("Compiling ALE returned #{result}\nError Code: #{err_code}.\n")
+          IO.binwrite result
       end
     end
   end

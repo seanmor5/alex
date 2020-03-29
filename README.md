@@ -1,6 +1,7 @@
 # ALEx
 
 > (A)rcade (L)earning (E)nvironment for Eli(x)ir.
+
 ![Hex.pm](https://img.shields.io/hexpm/v/alex)
 
 ![Tetris GIF](assets/alex.gif)
