@@ -1,5 +1,6 @@
 #include "nifpp.h"
 #include <ale_interface.hpp>
+#include <iostream>
 
 const nifpp::str_atom ok("ok");
 const nifpp::str_atom error("error");
@@ -268,6 +269,18 @@ static ERL_NIF_TERM get_available_difficulties_size(ErlNifEnv* env, int argc, co
   return nifpp::make(env, std::make_tuple(ok, ret));
 }
 
+static ERL_NIF_TERM get_difficulty(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  int difficulty;
+
+  nifpp::get(env, argv[0], interface);
+
+  difficulty = interface->environment->getDifficulty();
+
+  return nifpp::make(env, std::make_tuple(ok, difficulty));
+}
+
 static ERL_NIF_TERM set_difficulty(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
   ale::ALEInterface* interface;
@@ -381,6 +394,31 @@ static ERL_NIF_TERM get_episode_frame_number(ErlNifEnv* env, int argc, const ERL
   return nifpp::make(env, std::make_tuple(ok, frame));
 }
 
+static ERL_NIF_TERM get_screen(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  size_t w, h;
+  ale::pixel_t *screen_data;
+
+  nifpp::get(env, argv[0], interface);
+
+  screen_data = interface->getScreen().getArray();
+
+  return nifpp::make(env, std::make_tuple(ok, screen_data));
+}
+
+static ERL_NIF_TERM get_ram(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  const unsigned char* ale_ram;
+
+  nifpp::get(env, argv[0], interface);
+
+  ale_ram = interface->getRAM().array();
+
+  return nifpp::make(env, std::make_tuple(ok, ale_ram));
+}
+
 static ERL_NIF_TERM get_ram_size(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
   ale::ALEInterface* interface;
@@ -414,9 +452,183 @@ static ERL_NIF_TERM get_screen_width(ErlNifEnv* env, int argc, const ERL_NIF_TER
   return nifpp::make(env, std::make_tuple(ok, screen_width));
 }
 
+static ERL_NIF_TERM get_screen_rgb(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  size_t w, h, screen_size;
+  ale::pixel_t *ale_screen_data;
+  std::vector<unsigned char> output_buffer;
+
+  nifpp::get(env, argv[0], interface);
+
+  w = interface->getScreen().width();
+  h = interface->getScreen().height();
+  screen_size = w*h;
+
+  ale_screen_data = interface->getScreen().getArray();
+
+  interface->theOSystem->colourPalette().applyPaletteRGB(output_buffer, ale_screen_data, screen_size);
+
+  return nifpp::make(env, std::make_tuple(ok, output_buffer));
+}
+
+static ERL_NIF_TERM get_screen_grayscale(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  size_t w, h, screen_size;
+  ale::pixel_t *ale_screen_data;
+  std::vector<unsigned char> output_buffer;
+
+  nifpp::get(env, argv[0], interface);
+
+  w = interface->getScreen().width();
+  h = interface->getScreen().height();
+  screen_size = w*h;
+
+  ale_screen_data = interface->getScreen().getArray();
+
+  interface->theOSystem->colourPalette().applyPaletteGrayscale(output_buffer, ale_screen_data, screen_size);
+
+  return nifpp::make(env, std::make_tuple(ok, output_buffer));
+}
+
+static ERL_NIF_TERM save_screen_png(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  std::string path;
+
+  nifpp::get(env, argv[0], interface);
+  nifpp::get(env, argv[1], path);
+
+  interface->saveScreenPNG(path);
+
+  nifpp::TERM ok_status = nifpp::make(env, ok);
+
+  return ok_status;
+}
+
+static ERL_NIF_TERM save_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+
+  nifpp::get(env, argv[0], interface);
+
+  interface->saveState();
+
+  return nifpp::make(env, ok);
+}
+
+static ERL_NIF_TERM load_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+
+  nifpp::get(env, argv[0], interface);
+
+  interface->loadState();
+
+  return nifpp::make(env, ok);
+}
+
+static ERL_NIF_TERM clone_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  ale::ALEState state;
+
+  nifpp::get(env, argv[0], interface);
+
+  state = interface->cloneState();
+
+  auto ptr = nifpp::construct_resource<ale::ALEState>(state);
+
+  nifpp::TERM ret = nifpp::make(env, ptr);
+
+  return nifpp::make(env, std::make_tuple(ok, ptr));
+}
+
+static ERL_NIF_TERM restore_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  ale::ALEState* state;
+
+  nifpp::get(env, argv[0], interface);
+  nifpp::get(env, argv[1], state);
+
+  interface->restoreState(*state);
+
+  return nifpp::make(env, ok);
+}
+
+static ERL_NIF_TERM clone_system_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  ale::ALEState state;
+
+  nifpp::get(env, argv[0], interface);
+
+  state = interface->cloneSystemState();
+
+  auto ptr = nifpp::construct_resource<ale::ALEState>(state);
+
+  return nifpp::make(env, std::make_tuple(ok, ptr));
+}
+
+static ERL_NIF_TERM restore_system_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEInterface* interface;
+  ale::ALEState* state;
+
+  nifpp::get(env, argv[0], interface);
+  nifpp::get(env, argv[1], state);
+
+  interface->restoreSystemState(*state);
+
+  return nifpp::make(env, ok);
+}
+
+static ERL_NIF_TERM encode_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEState* state;
+  std::string serial;
+
+  nifpp::get(env, argv[0], state);
+
+  serial = state->serialize();
+
+  return nifpp::make(env, std::make_tuple(ok, serial));
+}
+
+static ERL_NIF_TERM encode_state_len(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  ale::ALEState* state;
+  int len;
+
+  nifpp::get(env, argv[0], state);
+
+  len = state->serialize().length();
+
+  return nifpp::make(env, std::make_tuple(ok, len));
+}
+
+static ERL_NIF_TERM decode_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  std::string serial;
+  int len;
+  ale::ALEState state;
+
+  nifpp::get(env, argv[0], serial);
+  nifpp::get(env, argv[1], len);
+
+  std::string str(serial, len);
+
+  auto ptr = nifpp::construct_resource<ale::ALEState>(str);
+
+  return nifpp::make(env, std::make_tuple(ok, ptr));
+}
+
 static int load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info)
 {
   nifpp::register_resource<ale::ALEInterface>(env, nullptr, "ALEInterface");
+  nifpp::register_resource<ale::ALEState>(env, nullptr, "ALEState");
   return 0;
 }
 
@@ -434,11 +646,13 @@ static ErlNifFunc nif_funcs[] =
   {"load_rom", 2, load_rom},
   {"act", 2, act},
   {"game_over", 1, game_over},
+  {"reset_game", 1, reset_game},
   {"get_available_modes", 1, get_available_modes},
   {"get_available_modes_size", 1, get_available_modes_size},
   {"set_mode", 2, set_mode},
   {"get_available_difficulties", 1, get_available_difficulties},
   {"get_available_difficulties_size", 1, get_available_difficulties_size},
+  {"get_difficulty", 1, get_difficulty},
   {"set_difficulty", 2, set_difficulty},
   {"get_legal_action_set", 1, get_legal_action_set},
   {"get_legal_action_set_size", 1, get_legal_action_set_size},
@@ -447,10 +661,23 @@ static ErlNifFunc nif_funcs[] =
   {"get_frame_number", 1, get_frame_number},
   {"lives", 1, lives},
   {"get_episode_frame_number", 1, get_episode_frame_number},
+  {"get_screen", 1, get_screen},
+  {"get_ram", 1, get_ram},
   {"get_ram_size", 1, get_ram_size},
   {"get_screen_height", 1, get_screen_height},
   {"get_screen_width", 1, get_screen_width},
-  {"reset_game", 1, reset_game}
+  {"get_screen_rgb", 1, get_screen_rgb},
+  {"get_screen_grayscale", 1, get_screen_grayscale},
+  {"save_state", 1, save_state},
+  {"load_state", 1, load_state},
+  {"clone_state", 1, clone_state},
+  {"restore_state", 2, restore_state},
+  {"clone_system_state", 1, clone_system_state},
+  {"restore_system_state", 2, restore_system_state},
+  {"save_screen_png", 2, save_screen_png},
+  {"encode_state", 1, encode_state},
+  {"encode_state_len", 1, encode_state_len},
+  {"decode_state", 2, decode_state}
 };
 
 ERL_NIF_INIT(Elixir.Alex.Interface, nif_funcs, load, nullptr, nullptr, nullptr);

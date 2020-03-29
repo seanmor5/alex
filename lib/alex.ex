@@ -1,6 +1,7 @@
 defmodule Alex do
   alias Alex.Interface
   alias Alex.ROM
+  alias Alex.State
 
   @moduledoc """
   Arcade Learning Environment for Elixir.
@@ -45,7 +46,7 @@ defmodule Alex do
 
     - `interface`: `%Interface{}`.
   """
-  def load(interface, path_to_rom) do
+  def load(%Interface{} = interface, path_to_rom) do
     ale_ref = interface.ref
 
     with :ok <- ROM.check_rom_exists(path_to_rom),
@@ -59,7 +60,8 @@ defmodule Alex do
          {:ok, frame} <- Interface.get_frame_number(ale_ref),
          {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
          {:ok, screen_height} <- Interface.get_screen_height(ale_ref),
-         {:ok, screen_width} <- Interface.get_screen_width(ale_ref) do
+         {:ok, screen_width} <- Interface.get_screen_width(ale_ref),
+         {:ok, state} <- State.get_state(interface) do
       %Interface{
         interface
         | rom: path_to_rom,
@@ -70,7 +72,8 @@ defmodule Alex do
           lives: lives,
           frame: frame,
           episode_frame: episode_frame,
-          screen_dim: {screen_height, screen_width}
+          screen_dim: {screen_height, screen_width},
+          state: state
       }
     else
       {:error, err} -> raise err
@@ -86,7 +89,10 @@ defmodule Alex do
 
     - `interface`: `%Interface{}`.
   """
-  def game_over?(interface), do: Interface.game_over(interface.ref)
+  def game_over?(%Interface{} = interface) do
+    {:ok, game_over} = Interface.game_over(interface.ref)
+    game_over
+  end
 
   @doc """
   Resets the given interface.
@@ -97,7 +103,7 @@ defmodule Alex do
 
     - `interface`: `%Interface{}`.
   """
-  def reset(interface) do
+  def reset(%Interface{} = interface) do
     ale_ref = interface.ref
     Interface.reset_game(ale_ref)
     with {:ok, frame}         <- Interface.get_frame_number(ale_ref),
