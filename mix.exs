@@ -107,7 +107,7 @@ defmodule Alex.MixProject do
       maintainers: @maintainers,
       name: "alex",
       files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
-                license* CHANGELOG* changelog* src)
+                license* CHANGELOG* changelog* src),
       links: %{"GitHub" => "http://www.github.com/seanmor5/alex"}
     ]
   end
