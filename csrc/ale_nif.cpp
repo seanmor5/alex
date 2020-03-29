@@ -411,6 +411,7 @@ static ERL_NIF_TERM get_ram(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
   ale::ALEInterface* interface;
   const unsigned char* ale_ram;
+  unsigned char* ram;
 
   nifpp::get(env, argv[0], interface);
 
