@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Compile.Ale do
 
   def run(_args) do
     {:ok, cwd} = File.cwd()
-    path_to_ale = Path.join([cwd, "csrc", "ale", "build"])
+    path_to_ale = Path.join([cwd, "src", "ale", "build"])
 
     if File.exists?(path_to_ale) do
       IO.write("ALE Already Compiled.\n")
