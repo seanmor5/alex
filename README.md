@@ -2,6 +2,8 @@
 
 > (A)rcade (L)earning (E)nvironment for Eli(x)ir.
 
+![Tetris GIF](assets/alex.gif)
+
 ## Documentation
 
 * [ALEx Documentation](#)

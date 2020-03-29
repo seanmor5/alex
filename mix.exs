@@ -104,6 +104,7 @@ defmodule Alex.MixProject do
     [
       maintainers: @maintainers,
       name: "alex",
+      files: ["lib/**/*.ex", "mix*", "csrc/ale/src", "priv", "README*", "csrc/ale/CMakeLists.txt", "csrc/ale/common.rules", "csrc/ale/makefile.mac", "csrc/ale/makefile.unix", "csrc/ale_nif.cpp", "csrc/nifpp.h"],
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "http://www.github.com/seanmor5/alex"}
     ]
