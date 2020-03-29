@@ -10,7 +10,7 @@ defmodule Alex.MixProject do
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
-      compilers: Mix.compilers()
+      compilers: [:ale] ++ Mix.compilers()
     ]
   end
 
