@@ -23,7 +23,7 @@ end
 defmodule Alex.MixProject do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.2.0"
   @url "https://www.github.com/seanmor5/alex"
   @maintainers ["Sean Moriarity"]
 
@@ -105,9 +105,9 @@ defmodule Alex.MixProject do
     [
       maintainers: @maintainers,
       name: "alex",
-      files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
-                license* CHANGELOG* changelog* src),
-      links: %{"GitHub" => "http://www.github.com/seanmor5/alex"}
+      files: ~w(lib priv .formatter.exs mix.exs README* src),
+      links: %{"GitHub" => "http://www.github.com/seanmor5/alex"},
+      licenses: ["GNU General Public License 2.0"]
     ]
   end
 end
