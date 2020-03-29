@@ -1,6 +1,8 @@
 # Alex
 
-**Arcade Learning Environment for Elixir**
+**[https://github.com/mgbellemare/Arcade-Learning-Environment](Arcade Learning Environment) for Elixir**
+
+## Overview
 
 ## Installation
 

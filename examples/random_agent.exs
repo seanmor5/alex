@@ -1,5 +1,11 @@
 # Create new Alex interface
-interface = Alex.new(display_screen: true, random_seed: 123)
+interface = Alex.new()
+
+# Set Options
+interface =
+  interface
+  |> Alex.set_option(:display_screen, true)
+  |> Alex.set_option(:random_seed, 123)
 
 # Load the ROM
 tetris = Alex.load(interface, "priv/tetris.bin")

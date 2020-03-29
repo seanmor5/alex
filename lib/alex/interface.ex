@@ -96,7 +96,7 @@ defmodule Alex.Interface do
 
     - `ref`: Reference to ALE.
     - `key`: `String` key.
-    - `val`: `String value.
+    - `val`: `String` value.
   """
   def set_string(_ref, _key, _val), do: raise("set_string/3 not implemented.")
 
@@ -109,7 +109,7 @@ defmodule Alex.Interface do
 
     - `ref`: Reference to ALE.
     - `key`: `String` key.
-    - `val`: `Integer value.
+    - `val`: `Integer` value.
   """
   def set_int(_ref, _key, _val), do: raise("set_int/3 not implemented.")
 
@@ -122,7 +122,7 @@ defmodule Alex.Interface do
 
     - `ref`: Reference to ALE.
     - `key`: `String` key.
-    - `val`: `Boolean value.
+    - `val`: `Boolean` value.
   """
   def set_bool(_ref, _key, _val), do: raise("set_bool/3 not implemented.")
 
@@ -135,7 +135,7 @@ defmodule Alex.Interface do
 
     - `ref`: Reference to ALE.
     - `key`: `String` key.
-    - `val`: `Float value.
+    - `val`: `Float` value.
   """
   def set_float(_ref, _key, _val), do: raise("set_float/3 not implemented.")
 
