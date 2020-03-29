@@ -145,8 +145,12 @@ defmodule Alex do
     Interface.reset_game(ale_ref)
     with {:ok, frame}         <- Interface.get_frame_number(ale_ref),
          {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
-         {:ok, lives}         <- Interface.lives(ale_ref) do
-           %Interface{interface | frame: frame, episode_frame: episode_frame, lives: lives}
+         {:ok, lives}         <- Interface.lives(ale_ref),
+         {:ok, legal_actions} <- Interface.get_legal_action_set(ale_ref),
+         {:ok, min_actions} <- Interface.get_minimal_action_set(ale_ref),
+         {:ok, state} <- State.new(interface),
+         {:ok, screen} <- Screen.new(interface) do
+           %Interface{interface | frame: frame, episode_frame: episode_frame, lives: lives, legal_actions: MapSet.new(legal_actions), minimal_actions: MapSet.new(min_actions), state: state, screen: screen}
     else
       err -> raise err
     end

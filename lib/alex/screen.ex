@@ -47,6 +47,7 @@ defmodule Alex.Screen do
         dtg
         |> DateTime.to_string()
         |> String.replace(" ", "_")
+        |> String.replace(":", "_")
         |> Kernel.<>(".png")
       else
         path

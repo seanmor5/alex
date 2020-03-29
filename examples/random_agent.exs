@@ -2,22 +2,23 @@
 interface = Alex.new(display_screen: true, random_seed: 123)
 
 # Load the ROM
-interface = Alex.load(interface, "priv/tetris.bin")
-
-# Legal Actions
-legal_actions = interface.legal_actions
+tetris = Alex.load(interface, "priv/tetris.bin")
 
 episode =
-  fn total, episode ->
-    if Alex.game_over?(interface) do
-      total
+  fn game, episode ->
+    if Alex.game_over?(game) do
+      game
     else
-      {:ok, reward} = Alex.Interface.act(interface.ref, Enum.random(legal_actions))
-      total = total + reward
-      episode.(total, episode)
+      game = Alex.step(game, Enum.random(game.legal_actions))
+      episode.(game, episode)
     end
   end
 
-score = episode.(0, episode)
+# Run the Game and Store Object
+tetris = episode.(tetris, episode)
 
-IO.write("\nEpisode ended with score: #{score}\n")
+# Take a Screenshot of Final Screen
+Alex.Screen.screenshot(tetris)
+
+# Output Result
+IO.write("\nEpisode ended with score: #{tetris.reward}\n")
