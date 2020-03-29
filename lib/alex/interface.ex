@@ -77,7 +77,7 @@ defmodule Alex.Interface do
 
   @doc false
   def load_nifs do
-    :erlang.load_nif('./csrc/ale/alex/libale_c', 0)
+    :erlang.load_nif('./src/ale/alex/libale_c', 0)
   end
 
   @doc """
