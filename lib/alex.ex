@@ -2,6 +2,7 @@ defmodule Alex do
   alias Alex.Interface
   alias Alex.ROM
   alias Alex.State
+  alias Alex.Screen
 
   @moduledoc """
   Arcade Learning Environment for Elixir.
@@ -59,9 +60,8 @@ defmodule Alex do
          {:ok, lives} <- Interface.lives(ale_ref),
          {:ok, frame} <- Interface.get_frame_number(ale_ref),
          {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
-         {:ok, screen_height} <- Interface.get_screen_height(ale_ref),
-         {:ok, screen_width} <- Interface.get_screen_width(ale_ref),
-         {:ok, state} <- State.new(interface) do
+         {:ok, state} <- State.new(interface),
+         {:ok, screen} <- Screen.new(interface) do
       %Interface{
         interface
         | rom: path_to_rom,
@@ -72,11 +72,48 @@ defmodule Alex do
           lives: lives,
           frame: frame,
           episode_frame: episode_frame,
-          screen_dim: {screen_height, screen_width},
+          screen: screen,
           state: state
       }
     else
       {:error, err} -> raise err
+    end
+  end
+
+  @doc """
+  Performs a step with provided `action` and updates the interface.
+
+  Returns `%Interface`.
+
+  # Parameters
+
+    - `interface`: `%Interface{}`.
+    - `action`: `Integer` valid action.
+  """
+  def step(%Interface{} = interface, action) do
+    ale_ref = interface.ref
+    if not MapSet.member?(interface.legal_actions, action) do
+    else
+      with {:ok, reward} <- Interface.act(ale_ref, action),
+           {:ok, lives} <- Interface.lives(ale_ref),
+           {:ok, legal_actions} <- Interface.get_legal_action_set(ale_ref),
+           {:ok, min_actions} <- Interface.get_minimal_action_set(ale_ref),
+           {:ok, frame} <- Interface.get_frame_number(ale_ref),
+           {:ok, episode_frame} <- Interface.get_episode_frame_number(ale_ref),
+           {:ok, state} <- State.new(interface) do
+            %Interface{
+              interface |
+              reward: interface.reward+reward,
+              lives: lives,
+              legal_actions: MapSet.new(legal_actions),
+              minimal_actions: MapSet.new(min_actions),
+              frame: frame,
+              episode_frame: episode_frame,
+              state: state
+            }
+      else
+        err -> raise err
+      end
     end
   end
 

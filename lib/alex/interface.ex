@@ -16,8 +16,9 @@ defmodule Alex.Interface do
     lives: 0,
     frame: 0,
     episode_frame: 0,
-    screen_dim: {0, 0},
+    screen: nil,
     state: nil,
+    ram: nil,
     reward: 0
   ]
 

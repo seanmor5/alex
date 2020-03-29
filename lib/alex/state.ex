@@ -23,7 +23,7 @@ defmodule Alex.State do
          {:ok, length}  <- Interface.encode_state_len(state) do
           {:ok, %State{ref: state, encoded: encoded, length: length}}
     else
-      raise err -> err
+      err -> raise err
     end
   end
 
