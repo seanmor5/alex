@@ -135,7 +135,7 @@ defmodule Alex do
   end
 
   @doc """
-  Resets the given interface.
+  Resets the interface to beginning of an episode.
 
   Returns `%Interface{}`.
 
@@ -301,7 +301,7 @@ defmodule Alex do
       """)
 
   @doc """
-  Set interface to given state.
+  Sets interface to given state.
 
   Returns `%Interface{}`.
 
