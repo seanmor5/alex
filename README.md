@@ -8,7 +8,7 @@
 
 ## Documentation
 
-* [ALEx Documentation](#https://hexdocs.pm/alex/getting-started.html)
+* [ALEx Documentation](https://hexdocs.pm/alex/getting-started.html)
 * [Arcade Learning Environment Manual](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/manual/manual.pdf)
 * [Arcade Learning Environment: An Evaluation Platform for General Agents](https://arxiv.org/abs/1207.4708)
 
@@ -67,7 +67,7 @@ The agent will make random actions over the course of a Tetris game.
 
 ALEx supports all ROMs supported by ALE. ROMs are easy to find online. This Repo comes with a Tetris ROM.
 
-See [Supported ROMs](#https://hexdocs.pm/alex/supported-roms.html#content).
+See [Supported ROMs](https://hexdocs.pm/alex/supported-roms.html#content).
 
 ## Contributing
 
