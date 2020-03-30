@@ -7,14 +7,16 @@ defmodule Mix.Tasks.Compile.Ale do
     if File.exists?(path_to_ale) do
       IO.write("ALE Already Compiled.\n")
     else
-      with {_result, 0} <- System.cmd("mkdir", [path_to_ale]),
+      with {_result, 0} <- System.cmd("mkdir", [path_to_ale], stderr_to_stdout: true),
            :ok <- File.cd(path_to_ale),
-           {_result, 0} <- System.cmd("cmake", ["-DUSE_SDL=ON", ".."]),
-           {result, 0} <- System.cmd("make", ["-j", "4"]) do
+           {_result, 0} <- System.cmd("cmake", ["-DUSE_SDL=ON", ".."], stderr_to_stdout: true),
+           {result, 0} <- System.cmd("make", ["-j", "4"], stderr_to_stdout: true) do
         IO.binwrite result
+        if Version.match?(System.version(), "~> 1.9"), do: {:ok, []}, else: :ok
       else
         {result, err_code} ->
           IO.binwrite result
+          {:error, result, err_code}
       end
     end
   end
@@ -105,7 +107,9 @@ defmodule Alex.MixProject do
     [
       maintainers: @maintainers,
       name: "alex",
-      files: ~w(lib priv .formatter.exs mix.exs README* src),
+      files: ~w(lib priv/tetris.bin .formatter.exs mix.exs README* src/ale/src
+                src/ale_nif.cpp src/nifpp.h src/ale.cfg src/makefile.mac src/makefile.unix
+                src/CMakeLists.txt src/common.rules),
       links: %{"GitHub" => "http://www.github.com/seanmor5/alex"},
       licenses: ["GNU General Public License 2.0"]
     ]

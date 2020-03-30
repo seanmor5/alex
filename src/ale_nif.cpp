@@ -1,9 +1,9 @@
 #include "nifpp.h"
 #include <ale_interface.hpp>
-#include <iostream>
 
 const nifpp::str_atom ok("ok");
 const nifpp::str_atom error("error");
+const nifpp::str_atom badarg("badarg");
 
 static ERL_NIF_TERM ale_new(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -16,129 +16,153 @@ static ERL_NIF_TERM ale_new(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 static ERL_NIF_TERM get_string(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
 
-  std::string value = interface->getString(key);
+    std::string value = interface->getString(key);
 
-  nifpp::TERM ret = nifpp::make(env, value);
+    nifpp::TERM ret = nifpp::make(env, value);
 
-  return nifpp::make(env, std::make_tuple(ok, ret));
+    return nifpp::make(env, std::make_tuple(ok, ret));
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM get_int(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
 
-  int value = interface->getInt(key);
+    int value = interface->getInt(key);
 
-  nifpp::TERM ret = nifpp::make(env, value);
+    nifpp::TERM ret = nifpp::make(env, value);
 
-  return nifpp::make(env, std::make_tuple(ok, ret));
+    return nifpp::make(env, std::make_tuple(ok, ret));
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM get_bool(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
 
-  bool value = interface->getBool(key);
+    bool value = interface->getBool(key);
 
-  nifpp::TERM ret = nifpp::make(env, value);
+    nifpp::TERM ret = nifpp::make(env, value);
 
-  return nifpp::make(env, std::make_tuple(ok, ret));
+    return nifpp::make(env, std::make_tuple(ok, ret));
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM get_float(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
 
-  float value = interface->getFloat(key);
+    float value = interface->getFloat(key);
 
-  nifpp::TERM ret = nifpp::make(env, value);
+    nifpp::TERM ret = nifpp::make(env, value);
 
-  return nifpp::make(env, std::make_tuple(ok, ret));
+    return nifpp::make(env, std::make_tuple(ok, ret));
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM set_string(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key, value;
+  try {
+    ale::ALEInterface* interface;
+    std::string key, value;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
-  nifpp::get(env, argv[2], value);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
+    nifpp::get_throws(env, argv[2], value);
 
-  interface->setString(key, value);
+    interface->setString(key, value);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+    return nifpp::make(env, ok);
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM set_int(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
-  int value;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
+    int value;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
-  nifpp::get(env, argv[2], value);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
+    nifpp::get_throws(env, argv[2], value);
 
-  interface->setInt(key, value);
+    interface->setInt(key, value);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+    return nifpp::make(env, ok);
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM set_bool(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
-  bool value;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
+    bool value;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
-  nifpp::get(env, argv[2], value);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
+    nifpp::get_throws(env, argv[2], value);
 
-  interface->setBool(key, value);
+    interface->setBool(key, value);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+    return nifpp::make(env, ok);
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM set_float(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  ale::ALEInterface* interface;
-  std::string key;
-  double value;
+  try {
+    ale::ALEInterface* interface;
+    std::string key;
+    double value;
 
-  nifpp::get(env, argv[0], interface);
-  nifpp::get(env, argv[1], key);
-  nifpp::get(env, argv[2], value);
+    nifpp::get_throws(env, argv[0], interface);
+    nifpp::get_throws(env, argv[1], key);
+    nifpp::get_throws(env, argv[2], value);
 
-  interface->setFloat(key, (float) value);
+    interface->setFloat(key, (float) value);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+    return nifpp::make(env, ok);
+  } catch(nifpp::badarg e) {
+    return nifpp::make(env, std::make_tuple(error, badarg));
+  }
 }
 
 static ERL_NIF_TERM load_rom(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -151,9 +175,7 @@ static ERL_NIF_TERM load_rom(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
 
   interface->loadROM(path);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+  return nifpp::make(env, ok);
 }
 
 static ERL_NIF_TERM act(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -236,9 +258,7 @@ static ERL_NIF_TERM set_mode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
 
   interface->setMode(mode);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+  return nifpp::make(env, ok);
 }
 
 static ERL_NIF_TERM get_available_difficulties(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -291,9 +311,7 @@ static ERL_NIF_TERM set_difficulty(ErlNifEnv* env, int argc, const ERL_NIF_TERM 
 
   interface->setDifficulty(difficulty);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+  return nifpp::make(env, ok);
 }
 
 static ERL_NIF_TERM get_legal_action_set(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -510,9 +528,7 @@ static ERL_NIF_TERM save_screen_png(ErlNifEnv* env, int argc, const ERL_NIF_TERM
 
   interface->saveScreenPNG(path);
 
-  nifpp::TERM ok_status = nifpp::make(env, ok);
-
-  return ok_status;
+  return nifpp::make(env, ok);
 }
 
 static ERL_NIF_TERM save_state(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
