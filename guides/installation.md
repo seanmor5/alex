@@ -27,7 +27,7 @@ Add `alex` to your dependencies:
 
 ```
 defp deps do
-    {:alex, "~> 0.2.0"}
+    {:alex, "~> 0.3.0"}
 end
 ```
 

@@ -50,7 +50,7 @@ Then, add `alex` to your dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:alex, "~> 0.2.0"}
+    {:alex, "~> 0.3.0"}
   ]
 end
 ```
