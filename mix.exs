@@ -29,7 +29,7 @@ end
 defmodule Alex.MixProject do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.3.0"
   @url "https://www.github.com/seanmor5/alex"
   @maintainers ["Sean Moriarity"]
 
@@ -112,8 +112,8 @@ defmodule Alex.MixProject do
       maintainers: @maintainers,
       name: "alex",
       files: ~w(lib priv/tetris.bin .formatter.exs mix.exs README* src/ale/src
-                src/ale_nif.cpp src/nifpp.h src/ale.cfg src/makefile.mac src/makefile.unix
-                src/CMakeLists.txt src/common.rules),
+                src/ale_nif.cpp src/nifpp.h src/ale/ale.cfg src/ale/makefile.mac src/ale/makefile.unix
+                src/ale/CMakeLists.txt src/ale/common.rules),
       links: %{"GitHub" => "http://www.github.com/seanmor5/alex"},
       licenses: ["GNU General Public License 2.0"]
     ]
