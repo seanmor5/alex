@@ -6,6 +6,5 @@
 
 # v0.3.0
 * Fixed double compilation bug.
-* Stopped shipping libale_c with package.
-* Changed location of `compile.ale.ex`.
+* Stopped shipping libale_c with package which caused compilation to fail.
 * Added Safety Checks to `get_` and `set_` NIFs so they no longer SegFault when given bad arguments.
