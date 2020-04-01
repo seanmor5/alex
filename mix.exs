@@ -10,26 +10,28 @@ defmodule Mix.Tasks.Compile.Ale do
     if File.exists?(path_to_ale_build) do
       IO.write("ALE Already Compiled.\n")
     else
-      with {_result, 0} <- System.cmd("mkdir", [path_to_ale_build], stderr_to_stdout: true),
+      with :ok          <- File.mkdir(path_to_ale_build),
            :ok          <- File.cd(path_to_ale_build),
            {_result, 0} <- System.cmd("cmake", ["-DUSE_SDL=ON", ".."], stderr_to_stdout: true),
            {_result, 0} <- System.cmd("make", ["-j", "4"], stderr_to_stdout: true),
            :ok          <- File.cd(cwd) do
         IO.write("Successfully compiled ALE.\n")
+        :ok
       else
-        {result, _err_code} ->
-          IO.binwrite result
+        {result, err} ->
+          IO.inspect("Compilation failed. Cleaning `build`...\n")
+          {:ok, _} = File.rm_rf(path_to_ale_build)
+          IO.write("#{err}: #{result}\n")
+          :error
       end
     end
-
-    :ok
   end
 end
 
 defmodule Alex.MixProject do
   use Mix.Project
 
-  @version "0.3.0"
+  @version "0.3.1"
   @url "https://www.github.com/seanmor5/alex"
   @maintainers ["Sean Moriarity"]
 
