@@ -19,8 +19,6 @@ defmodule Mix.Tasks.Compile.Ale do
         :ok
       else
         {result, err} ->
-          IO.inspect("Compilation failed. Cleaning `build`...\n")
-          {:ok, _} = File.rm_rf(path_to_ale_build)
           IO.write("#{err}: #{result}\n")
           :error
       end
