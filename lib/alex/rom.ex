@@ -116,16 +116,11 @@ defmodule Alex.ROM do
     - `path_to_rom`: Path to ROM file.
   """
   def rom_supported?(path_to_rom) do
+    {:ok, file} = File.read path_to_rom
+
     hash =
-      path_to_rom
-      |> File.stream!()
-      |> Enum.reduce(
-        :crypto.hash_init(:md5),
-        fn chunk, prev ->
-          :crypto.hash_update(prev, chunk)
-        end
-      )
-      |> :crypto.hash_final()
+      file
+      |> :crypto.hash(:md5, file)
       |> Base.encode16()
       |> String.downcase()
 
