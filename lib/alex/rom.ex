@@ -119,8 +119,7 @@ defmodule Alex.ROM do
     {:ok, file} = File.read path_to_rom
 
     hash =
-      file
-      |> :crypto.hash(:md5, file)
+      :crypto.hash(:md5, file)
       |> Base.encode16()
       |> String.downcase()
 
