@@ -55,7 +55,7 @@ def deps do
 end
 ```
 
-Finally, run `mix deps.get, deps.compile`. The first compilation will take quite a bit of time.
+Finally, run `mix do deps.get, deps.compile`. The first compilation will take quite a bit of time.
 
 ## Examples
 
