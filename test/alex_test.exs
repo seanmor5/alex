@@ -1,65 +1,146 @@
 defmodule AlexTest do
-  alias Alex.Interface
-  use ExUnit.Case
-  doctest Alex
+  use Alex.Case, async: true
 
-  describe "Alex" do
-    test "new/0" do
-      assert %Interface{} = Alex.new()
-      assert %Interface{display_screen: true} = Alex.new(display_screen: true)
-      assert %Interface{random_seed: 123} = Alex.new(random_seed: 123)
+  alias Alex.Env
+
+  describe "new/2" do
+    test "loads a ROM by path and captures static metadata" do
+      env = tetris_env()
+
+      assert %Env{} = env
+      assert env.rom =~ "tetris.bin"
+      assert env.screen_dims == {210, 160}
+      assert env.ram_size == 128
+      assert length(env.legal_actions) == 18
+      assert :noop in env.minimal_actions
+      assert is_list(env.modes) and env.modes != []
+      assert is_list(env.difficulties) and env.difficulties != []
     end
 
-    test "load/2" do
-      tetris = "priv/tetris.bin"
-      interface = Alex.new()
-
-      assert_raise RuntimeError, "Unsupported ROM: `priv/unsupported.bin`.", fn ->
-        Alex.load(interface, "priv/unsupported.bin")
+    test "raises for an unknown ROM name" do
+      assert_raise ArgumentError, ~r/could not find ROM/, fn ->
+        Alex.new("definitely_not_a_real_game")
       end
+    end
 
-      assert_raise RuntimeError, "Could not find ROM File: `bad/path/rom`.", fn ->
-        Alex.load(interface, "bad/path/rom")
+    test "accepts emulator settings" do
+      env = tetris_env(repeat_action_probability: 0.0, frame_skip: 4)
+      assert %Env{} = env
+    end
+  end
+
+  describe "step/2" do
+    test "returns an updated env and info map" do
+      env = tetris_env()
+      {env, info} = Alex.step(env, :down)
+
+      assert %Env{} = env
+
+      assert Map.keys(info) |> Enum.sort() ==
+               [
+                 :episode_frame,
+                 :episode_reward,
+                 :frame,
+                 :game_over?,
+                 :lives,
+                 :reward,
+                 :truncated?
+               ]
+
+      assert info.frame > 0
+      assert is_boolean(info.game_over?)
+    end
+
+    test "accepts integer actions too" do
+      env = tetris_env()
+      assert {%Env{}, _info} = Alex.step(env, 0)
+    end
+
+    test "accumulates episode reward and resets it on reset/1" do
+      env = tetris_env()
+
+      {env, _} =
+        Enum.reduce(1..20, {env, nil}, fn _, {e, _} ->
+          Alex.step(e, Enum.random(Alex.minimal_actions(e)))
+        end)
+
+      assert Alex.episode_reward(env) >= 0
+      env = Alex.reset(env)
+      assert Alex.episode_reward(env) == 0
+    end
+
+    test "raises on an invalid action" do
+      env = tetris_env()
+
+      assert_raise ArgumentError, ~r/invalid action/, fn ->
+        Alex.step(env, :teleport)
       end
+    end
+  end
 
-      assert %Interface{rom: tetris} = Alex.load(interface, tetris)
+  describe "observations" do
+    test "screen_rgb returns a correctly-sized binary with shape" do
+      env = tetris_env()
+      {rgb, shape, dtype} = Alex.Screen.rgb(env)
+
+      assert shape == {210, 160, 3}
+      assert dtype == :u8
+      assert byte_size(rgb) == 210 * 160 * 3
     end
 
-    test "step/2" do
-      interface = Alex.new()
-      interface = Alex.load(interface, "priv/tetris.bin")
-      assert %Interface{frame: 1, episode_frame: 1} = Alex.step(interface, 2)
+    test "screen_grayscale returns a correctly-sized binary" do
+      env = tetris_env()
+      {gray, shape, :u8} = Alex.Screen.grayscale(env)
+
+      assert shape == {210, 160}
+      assert byte_size(gray) == 210 * 160
     end
 
-    test "set_option/3" do
-      interface = Alex.new()
-      assert %Interface{display_screen: true} = Alex.set_option(interface, :display_screen, true)
-      assert %Interface{display_screen: true} = Alex.set_option(interface, "display_screen", true)
-      assert %Interface{random_seed: 123} = Alex.set_option(interface, :random_seed, 123)
+    test "ram returns 128 bytes" do
+      env = tetris_env()
+      assert byte_size(Alex.RAM.read(env)) == 128
+    end
+  end
+
+  describe "snapshots" do
+    test "save/restore rewinds the emulator" do
+      env = tetris_env()
+      snap = Alex.Snapshot.save(env)
+
+      {env, _} =
+        Enum.reduce(1..30, {env, nil}, fn _, {e, _} ->
+          Alex.step(e, Enum.random(Alex.minimal_actions(e)))
+        end)
+
+      assert Alex.frame(env) > 0
+      env = Alex.Snapshot.restore(env, snap)
+      assert Alex.frame(env) == 0
     end
 
-    test "set_state/2" do
-      interface = Alex.new()
-      interface = Alex.load(interface, "priv/tetris.bin")
-      state1 = interface.state
-      interface = Alex.step(interface, 1)
-      state2 = interface.state
-      interface = Alex.set_state(interface, state1)
-      assert state1.encoded == interface.state.encoded
-      interface = Alex.set_state(interface, state2)
-      assert state2.encoded == interface.state.encoded
-    end
+    test "serialize/deserialize round-trips" do
+      env = tetris_env()
+      snap = Alex.Snapshot.save(env, include_rng: true)
 
-    test "game_over?/1" do
-      interface = Alex.new()
-      interface = Alex.load(interface, "priv/tetris.bin")
-      assert Alex.game_over?(interface) == false
-    end
+      bytes = Alex.Snapshot.serialize(snap)
+      assert is_binary(bytes) and byte_size(bytes) > 0
 
-    test "reset/1" do
-      interface = Alex.load(Alex.new(), "priv/tetris.bin")
-      interface = Alex.step(interface, 1)
-      assert %Interface{episode_frame: 0} = Alex.reset(interface)
+      restored = Alex.Snapshot.deserialize(bytes)
+      env = Alex.Snapshot.restore(env, restored)
+      assert Alex.frame(env) == 0
+    end
+  end
+
+  describe "episodes" do
+    test "random play reaches game over" do
+      env = tetris_env()
+
+      {_env, info} =
+        Enum.reduce_while(1..1_000_000, {env, nil}, fn _, {e, _} ->
+          {e, info} = Alex.step(e, Enum.random(Alex.minimal_actions(e)))
+          if info.game_over?, do: {:halt, {e, info}}, else: {:cont, {e, info}}
+        end)
+
+      assert info.game_over?
     end
   end
 end

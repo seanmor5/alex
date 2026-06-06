@@ -1,40 +1,26 @@
 defmodule Alex.RAM do
-  alias Alex.Interface
-  alias __MODULE__, as: RAM
   @moduledoc """
-  Convenience functions for working with ALE RAM.
+  Reading the console's 128 bytes of RAM.
+
+  RAM observations are useful for state-based agents and for inspecting
+  game-specific memory locations.
   """
 
-  @typedoc """
-  Abstraction around ALE RAM.
-
-  ## Fields
-
-    - `:contents`: RAM contents.
-    - `:size`: RAM size.
-  """
-  @type t :: %__MODULE__{
-    contents: Enum.t(),
-    size: integer()
-  }
-  defstruct [:contents, :size]
+  alias Alex.{Env, Native}
 
   @doc """
-  Creates a new RAM struct.
-
-  Returns `%Alex.RAM{}`.
-
-  # Parameters
-
-    - `interface`: `%Alex.Interface{}`.
+  Returns the 128 bytes of console RAM as a binary.
   """
-  def new(%Interface{} = interface) do
-    ale_ref = interface.ref
-    with {:ok, ram} <- Interface.get_ram(ale_ref),
-         {:ok, ram_size} <- Interface.get_ram_size(ale_ref) do
-           {:ok, %RAM{contents: ram, size: ram_size}}
-    else
-      err -> raise err
-    end
+  @spec read(Env.t()) :: binary()
+  def read(%Env{ref: ref}) do
+    Native.get_ram(ref)
+  end
+
+  @doc """
+  Returns the byte at the given RAM `index` (0..127).
+  """
+  @spec at(Env.t(), non_neg_integer()) :: byte()
+  def at(%Env{} = env, index) when is_integer(index) and index >= 0 do
+    :binary.at(read(env), index)
   end
 end

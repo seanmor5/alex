@@ -1,96 +1,95 @@
 # Getting Started
 
-ALEx is an implementation of the Arcade Learning Environment for Elixir.
+ALEx is an Elixir interface to the Arcade Learning Environment (ALE).
 
 ## Install ALEx
 
 See the [Installation Guide](installation.html).
 
-## Creating a Random Agent
+## Creating an environment
 
-Interaction with ALEx is easy. First, create a new interface and set your confgiuration options:
+Load a game by name (resolved against your ROM directory — see the
+[Configuration Guide](configuration.html)) or by an explicit path to a `.bin`
+file:
 
-```
-# Create ALEx interface
-interface = Alex.new()
-
-# Set options
-interface =
-    interface
-    |> Alex.set_option(:display_screen, true)
-    |> Alex.set_option(:random_seed, 123)
+```elixir
+env = Alex.new("breakout", random_seed: 123)
 ```
 
-You can also pass options as a `Keyword` to `Alex.new/1`:
+`Alex.new/2` returns an `%Alex.Env{}` that wraps a single, **mutable** emulator.
+Its struct holds static metadata captured once at load — the available actions,
+modes, difficulties, and screen dimensions:
 
-```
-interface = Alex.new(display_screen: true, random_seed: 123)
-```
-
-Next, load a ROM:
-
-```
-# Load Tetris
-tetris = Alex.load(interface, "priv/tetris.bin")
+```elixir
+Alex.minimal_actions(env)
+#=> [:noop, :fire, :right, :left]
+env.screen_dims
+#=> {210, 160}
 ```
 
-Finally, play an episode:
+## Playing an episode
 
-```
-episode =
-    fn game, episode ->
-        # If the game is over, return the score
-        if Alex.game_over?(game) do
-            game.reward
-        else
-            # Take a random action
-            game = Alex.step(game, Enum.random(game.legal_actions))
-            episode.(game, episode)
-        end
-    end
+`Alex.step/2` applies an action and returns the updated env together with an
+`info` map. Actions are `Alex.Action` atoms (or their integer values):
 
-# Run an episode
-tetris = episode.(tetris, episode)
+```elixir
+env =
+  Enum.reduce_while(Stream.cycle([:play]), env, fn _, env ->
+    {env, info} = Alex.step(env, Enum.random(Alex.minimal_actions(env)))
+    if info.game_over?, do: {:halt, env}, else: {:cont, env}
+  end)
+
+IO.puts("Score: #{Alex.episode_reward(env)}")
 ```
 
-## Starting Over
+The `info` map contains `:reward`, `:episode_reward`, `:game_over?`,
+`:truncated?`, `:lives`, `:frame`, and `:episode_frame`.
 
-You can easily restart an episode with `Alex.reset/1`:
+## Observations
 
-```
-tetris = episode.(tetris, episode)
+Screen and RAM observations are returned as binaries with their shape, so you
+can hand them straight to a tensor library:
 
-# Run it back from the start
-tetris = Alex.reset(tetris)
-tetris = episode.(tetris, episode)
-```
-
-## Taking a Screenshot
-
-ALEx allows you to take a screenshot of the current screen at any time using `Alex.screenshot/2`:
-
-```
-# Run an episode
-tetris = episode(tetris, episode)
-
-# See how it ended
-Alex.screenshot(tetris)
+```elixir
+{rgb, {height, width, 3}, :u8} = Alex.Screen.rgb(env)
+{gray, {height, width}, :u8}   = Alex.Screen.grayscale(env)
+ram                            = Alex.RAM.read(env)  # 128-byte binary
 ```
 
-You can provide a path. The default path is the current directory with the current UTC time.
+For example, with `Nx`:
 
-## Supported ROMs
+```elixir
+{rgb, shape, :u8} = Alex.Screen.rgb(env)
+tensor = rgb |> Nx.from_binary(:u8) |> Nx.reshape(shape)
+```
 
-ALEx supports all ROMS supported by the ALE. ROMs can be easily found on repositories online. ALEx will verify the checksum of a ROM automatically before loading it.
+## Resetting and snapshots
 
-[Supported ROMs](supported-roms.html) has a list of all supported ROMs and their MD5 checksums.
+Start a new episode with `Alex.reset/1`. To branch or rewind *within* an episode,
+take a snapshot and restore it later:
 
-## Configuring ALEx
+```elixir
+snap = Alex.Snapshot.save(env)
+{env, _} = Alex.step(env, :fire)
+env = Alex.Snapshot.restore(env, snap)  # back to where the snapshot was taken
+```
 
-See the [Configuration Guide](configuration.html).
+Snapshots can be serialized to a binary for storage and rebuilt with
+`Alex.Snapshot.deserialize/1`.
 
-## More Information
+## Screenshots
 
-You'll want to check out the [Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment) to learn more.
+```elixir
+Alex.Screen.save_png(env, "frame.png")
+```
 
-Additionally, you can check out the [manual](https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/manual/manual.pdf).
+## Livebook
+
+If you have `:kino` installed, you can play a game interactively or watch an
+agent — see `Alex.Kino`.
+
+## More information
+
+The [Arcade Learning
+Environment](https://github.com/Farama-Foundation/Arcade-Learning-Environment)
+documentation covers the underlying platform in depth.

@@ -1,32 +1,38 @@
-# Create new Alex interface
-interface = Alex.new()
+# A random agent playing a full episode.
+#
+# Run with a ROM name (resolved against your ROM directory):
+#
+#     mix run examples/random_agent.exs breakout
+#
+# or with an explicit path to a .bin file:
+#
+#     mix run examples/random_agent.exs priv/roms/tetris.bin
 
-# Set Initialization Options
-interface =
-  interface
-  |> Alex.set_option(:display_screen, true)
-  |> Alex.set_option(:sound, true)
-  |> Alex.set_option(:random_seed, 123)
-
-# Load the ROM
-tetris = Alex.load(interface, "priv/tetris.bin")
-
-# Define an Episode
-episode =
-  fn game, episode ->
-    if Alex.game_over?(game) do
-      game
-    else
-      game = Alex.step(game, Enum.random(game.legal_actions))
-      episode.(game, episode)
-    end
+rom =
+  case System.argv() do
+    [rom | _] -> rom
+    [] -> Path.join([:code.priv_dir(:alex), "roms", "tetris.bin"])
   end
 
-# Run the Game and Store Object
-tetris = episode.(tetris, episode)
+env = Alex.new(rom, random_seed: 123)
 
-# Take a Screenshot of Final Screen
-Alex.screenshot(tetris)
+IO.puts("Loaded #{Path.basename(env.rom)}")
+IO.puts("Minimal actions: #{inspect(Alex.minimal_actions(env))}")
 
-# Output Result
-IO.write("\nEpisode ended with score: #{tetris.reward}\n")
+env =
+  Enum.reduce_while(Stream.cycle([:play]), env, fn _, env ->
+    {env, info} = Alex.step(env, Enum.random(Alex.minimal_actions(env)))
+
+    if info.game_over? do
+      {:halt, env}
+    else
+      {:cont, env}
+    end
+  end)
+
+# Save the final frame next to this script.
+:ok = Alex.Screen.save_png(env, "final_frame.png")
+
+IO.puts("Episode ended after #{Alex.episode_frame(env)} frames")
+IO.puts("Score (episode reward): #{Alex.episode_reward(env)}")
+IO.puts("Saved final frame to final_frame.png")
